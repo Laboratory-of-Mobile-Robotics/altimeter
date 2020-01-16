@@ -22,7 +22,10 @@ class Altimeter:
                 data.append(float(aux))
                 aux = ""
         data.append(float(aux))
-        self.temperature, self.pressure, self.altitude_sensor = data
+        try:
+            self.temperature, self.pressure, self.altitude_sensor = data
+        except:
+            pass
 
     def read_sensor(self):
         self.raw_msg = self.ser.readline().decode()[:-2]
