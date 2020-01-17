@@ -28,11 +28,7 @@ db0ef78 on Nov 18, 2019
  
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
+altimeter_node/__pycache__/
 
 # Distribution / packaging
 .Python

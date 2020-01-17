@@ -7,6 +7,11 @@ This project contains an [ESP32 driver](./barometer) to read pressure and temper
 * [BMP280 I2C Pressure and Temperature Sensor](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-bmp280-barometric-pressure-plus-temperature-sensor-breakout.pdf);
 * a good computer. ( * ▽ * )=b
 
+## Main requirements
+- ArduinoIDE;
+- Python 3.5 (used version 3.5.2);
+- ROS (used Kinetic).
+
 ## Usage
 1. Connect the BMP280 sensor to ESP32 correctly;
 2. Connect the ESP32 to the computer (USB) and upload the barometer driver available at /barometer/barometer.ino;

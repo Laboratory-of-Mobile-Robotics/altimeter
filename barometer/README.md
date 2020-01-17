@@ -8,7 +8,7 @@ The BMP280 sensor was connected to the ESP32 dev kit as the following schematic 
 
 <img src="./image/circuit.png" alt="drawing" width="500"/>
 
-Since the communication is I2C, the connection respected the ESP32 dev kit pinout:
+The I2C connection between the sensor and the ESP32 dev kit are:
 * D22 --> SCL
 * D21 --> SDA
 
