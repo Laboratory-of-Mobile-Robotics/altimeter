@@ -13,8 +13,8 @@ ALTITUDE_STDEV = 1e-1
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--log", "-l", help="True to log topics data values int CSV file; False to not log the data.", default=False)
+parser.add_argument("--rate", "-r", help="Number to define the rate of data sampling in Hertz.", default=2)
 args = parser.parse_args()
-print(args.log)
 
 class BMP280Node:
     def __init__(self):
@@ -23,8 +23,9 @@ class BMP280Node:
         self.temperaturePub = rospy.Publisher('temperature/data', Temperature, queue_size=1)
         self.filename=""
         self.log = args.log
+        self.rate = float(args.rate)
         if(self.log):
-            self.filename="log_data.csv"
+            self.filename="log_data_" + datetime.now().strftime("%Y%m%d") + ".csv"
             with open(self.filename, mode='w') as file:
                 fields = ['temperature','pressure','altitude','timestamp']
                 writer = csv.writer(file, delimiter=',')
@@ -69,8 +70,7 @@ class BMP280Node:
         print(line)
 
     def spin(self):
-        rate = rospy.Rate(10)
-        # rate = rospy.Rate(1/60) # once per 5 minutes
+        rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
             altimeterObj.read_sensor()
             altimeterObj.estimate_altitude()

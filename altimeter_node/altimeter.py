@@ -58,16 +58,3 @@ class Altimeter:
     
     def get_altitude(self):
         return self.altitude
-
-
-# EXAMPLE PLAY
-
-# altimeter = Altimeter()
-# while(True):
-#     try:
-#         altimeter.read_sensor()
-#         # ipdb.set_trace()
-#         altimeter.estimate_altitude()
-#         print(altimeter.get_altitude())
-#     except:
-#         pass
