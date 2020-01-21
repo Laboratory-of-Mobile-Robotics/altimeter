@@ -9,7 +9,8 @@ class Altimeter:
         self.pressure = pressure
         self.altitude_sensor = altitude
         self.altitude = altitude
-        self.baseline = 1013.25
+        # self.baseline = 1010
+        self.baseline = 1013.25  # Mean sea level pressure
         self.ser = serial.Serial('/dev/ttyUSB0', 9600)
 
     def parse_serial(self,delimiter=","):
