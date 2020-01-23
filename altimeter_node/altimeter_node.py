@@ -6,14 +6,17 @@ from altimeter import Altimeter
 import csv
 from datetime import datetime
 import argparse
+# import ipdb  # library for debugging
 
 # From BMP280 datasheet
 SENSOR_STDEV = 240 # (default 120 Pascal). Approximately 10 meters.
 ALTITUDE_STDEV = 1e-1
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--log", "-l", help="True to log topics data values int CSV file; False to not log the data.", default=False)
-parser.add_argument("--rate", "-r", help="Number to define the rate of data sampling in Hertz.", default=2)
+parser.add_argument("--log", "-l", help="True to log topics data values int CSV file; False to not log the data. Default = False.", default=False)
+parser.add_argument("--rate", "-r", help="Number to define the rate of data sampling in Hertz. Default = 2 Hz.", default=2)
+parser.add_argument("--temperature", "-t", help="True to consider real temperature measurement on altitude estimation; False to not measure the temperature, i.e., consider 15 *C. Default = True", default=True)
+parser.add_argument("--logfile", "-f", help="Name the log file. Default = log_data_<current date>.csv")
 args = parser.parse_args()
 
 class BMP280Node:
@@ -21,11 +24,16 @@ class BMP280Node:
         self.altitudePub = rospy.Publisher('altitude/data', PointStamped, queue_size=1)
         self.pressurePub = rospy.Publisher('pressure/data', FluidPressure, queue_size=1)
         self.temperaturePub = rospy.Publisher('temperature/data', Temperature, queue_size=1)
-        self.filename=""
+        self.filename = ""
         self.log = args.log
         self.rate = float(args.rate)
+        self.use_temperature = args.temperature
         if(self.log):
-            self.filename="log_data_" + datetime.now().strftime("%Y%m%d") + ".csv"
+            if(not args.logfile):
+                self.filename = "log_data_" + datetime.now().strftime("%Y%m%d") + ".csv"
+            else:
+                self.filename = str(args.logfile) + ".csv"
+
             with open(self.filename, mode='w') as file:
                 fields = ['temperature','pressure','altitude','timestamp']
                 writer = csv.writer(file, delimiter=',')
@@ -51,7 +59,10 @@ class BMP280Node:
     def pubTemperature(self):
         msg = Temperature()
         msg.header.stamp = rospy.Time.now()
-        msg.temperature = altimeterObj.get_temperature() + 273.15
+        if(self.use_temperature):
+            msg.temperature = altimeterObj.get_temperature() + 273.15
+        else:
+            msg.temperature = 15 + 273,15
         msg.variance = 0
         # rospy.loginfo(msg)
         self.temperaturePub.publish(msg)
@@ -73,7 +84,7 @@ class BMP280Node:
         rate = rospy.Rate(self.rate)
         while not rospy.is_shutdown():
             altimeterObj.read_sensor()
-            altimeterObj.estimate_altitude()
+            altimeterObj.estimate_altitude(self.use_temperature)
             self.pubAltitude()
             self.pubPressure()
             self.pubTemperature()

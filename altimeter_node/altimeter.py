@@ -42,10 +42,13 @@ class Altimeter:
             time.sleep(1)
         self.baseline = sum(baseline_values[:-25]) / len(baseline_values[:-25])
 
-    def estimate_altitude(self):
+    def estimate_altitude(self, use_temperature=True):
         # Remembering the sensor gives pressure in the SI units of Pascals, but the altitude formula requires mbar units, so the
         # measured pressure is divided by 100 to convert it.
-        self.altitude = ((pow(self.baseline / (self.pressure / 100), (1.0 / 5.257)) - 1.0) * (self.temperature + 273.15)) / 0.0065
+        if(use_temperature):
+            self.altitude = ((pow(self.baseline / (self.pressure / 100), (1.0 / 5.257)) - 1.0) * (self.temperature + 273.15)) / 0.0065
+        else:
+            self.altitude = ((pow(self.baseline / (self.pressure / 100), (1.0 / 5.257)) - 1.0) * (15.0 + 273.15)) / 0.0065
         
     def get_data(self):
         return [self.temperature, self.pressure, self.altitude]
